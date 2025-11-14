@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agua_project/style/colors.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -37,12 +38,24 @@ class _HomeState extends State<Home> {
             Container(
               width: MediaQuery.of(context).size.width,
               height: 200,
-              color: Colors.grey,
+              color: const Color.fromARGB(255, 27, 43, 49),
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                    value: 0.7,
+                    strokeWidth: 5,
+                    color: AppColors.primaryMain,
+                    backgroundColor: Colors.blueGrey,
+                    strokeCap: StrokeCap.round,
+                  ),
+                ),
+              ),
             ),
             Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.all(50),
-              color: Colors.grey,
+              color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -91,7 +104,7 @@ class _HomeState extends State<Home> {
                                             " " +
                                             position.toString(),
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.textPrimary,
                                           fontSize: 20,
                                         ),
                                       ),
@@ -104,13 +117,13 @@ class _HomeState extends State<Home> {
                                             Text(
                                               "Agregar",
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: AppColors.textPrimary,
                                                 fontSize: 20,
                                               ),
                                             ),
                                             Icon(
                                               Icons.add_circle_outline_sharp,
-                                              color: Colors.white,
+                                              color: AppColors.textPrimary,
                                             ),
                                           ],
                                         ),
