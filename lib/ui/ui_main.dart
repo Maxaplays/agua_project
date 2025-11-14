@@ -1,15 +1,16 @@
+import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 
-class Ui extends StatefulWidget {
+class UI extends StatefulWidget {
   static const routeName = '/UI';
 
-  const Ui({super.key});
+  const UI({super.key});
   @override
-  State<Ui> createState() => _UiState();
+  State<UI> createState() => _UIState();
 }
 
-class _UiState extends State<Ui> {
+class _UIState extends State<UI> {
   int _selectedIndex = 0;
   @override
   void initState() {
@@ -43,13 +44,20 @@ class _UiState extends State<Ui> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      body: SafeArea(child: Home()),
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).primaryColor,
-        centerTitle: true,
-        title: Text("Yaku"),
+        child: Icon(Icons.add),
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddActivity()),
+          ),
+        },
       ),
-      body: Home(),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.shifting,
         selectedFontSize: 0,
         onTap: _selectPage,
         selectedItemColor: Colors.white,

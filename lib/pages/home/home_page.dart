@@ -33,7 +33,6 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Center(child: const Text("Yaku app")),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 200,
