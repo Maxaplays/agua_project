@@ -1,5 +1,6 @@
 import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/ui/ui_main.dart';
+import 'package:agua_project/style/colors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'APP',
       themeMode: ThemeMode.system,
       theme: ThemeData(
-        primaryColor: Colors.blue[900],
+        primaryColor: AppColors.primaryMain,
         fontFamily: 'Lato',
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Color.fromRGBO(13, 71, 161, 1),
