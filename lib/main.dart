@@ -1,5 +1,5 @@
 import 'package:agua_project/ui/ui_main.dart';
-import 'package:agua_project/style/colors.dart';
+import 'package:agua_project/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
