@@ -1,52 +1,16 @@
+import 'package:agua_project/services/water_items_service.dart';
 import 'package:flutter/material.dart';
 import 'package:agua_project/theme/colors.dart';
-import 'package:agua_project/models/water_item.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final WaterItemsService service;
+  const Home({required this.service, super.key});
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final List<WaterItem> waterItems = [
-    WaterItem(
-      name: "Shower",
-      icon: Icons.shower,
-      value: 150,
-      color: Colors.lightBlue,
-    ),
-    WaterItem(
-      name: "Clean Hands",
-      icon: Icons.clean_hands_rounded,
-      value: 50,
-      color: Colors.blue.shade400,
-    ),
-    WaterItem(
-      name: "Drink Water",
-      icon: Icons.local_drink_rounded,
-      value: 60,
-      color: Colors.blue.shade700,
-    ),
-    WaterItem(
-      name: "Wash Dishes",
-      icon: Icons.waves_sharp,
-      value: 200,
-      color: Colors.blue.shade300,
-    ),
-    WaterItem(
-      name: "Bathroom",
-      icon: Icons.wc_sharp,
-      value: 110,
-      color: Colors.blue.shade200,
-    ),
-    WaterItem(
-      name: "Wash Clothes",
-      icon: Icons.local_laundry_service_rounded,
-      value: 300,
-    ),
-  ];
   @override
   void initState() {
     super.initState();
@@ -104,111 +68,124 @@ class _HomeState extends State<Home> {
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.all(50),
               child: Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: waterItems.length,
-                      itemBuilder: (context, position) => Column(
-                        children: <Widget>[
-                          Card(
-                            elevation: 0,
-                            margin: const EdgeInsets.only(
-                              top: 10.0,
-                              bottom: 10,
-                              left: 5,
-                              right: 5,
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                      bottom: 10,
-                                      left: 20,
-                                      right: 20,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
+                child: StreamBuilder(
+                  stream: widget.service.waterItems$,
+                  builder: (context, steam) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: steam.data!.length,
+                          itemBuilder: (context, position) => Column(
+                            children: <Widget>[
+                              Card(
+                                elevation: 0,
+                                margin: const EdgeInsets.only(
+                                  top: 10.0,
+                                  bottom: 10,
+                                  left: 5,
+                                  right: 5,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          top: 10,
+                                          bottom: 10,
+                                          left: 20,
+                                          right: 20,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Container(
-                                              width: 50,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                color: waterItems[position]
-                                                    .color
-                                                    .withAlpha(50),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Icon(
-                                                waterItems[position].icon,
-                                                color: AppColors.textPrimary,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            Row(
                                               children: [
-                                                Text(
-                                                  waterItems[position].name,
-                                                  style: TextStyle(
+                                                Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    color: steam
+                                                        .data![position]
+                                                        .color
+                                                        .withAlpha(50),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Icon(
+                                                    steam.data![position].icon,
                                                     color:
                                                         AppColors.textPrimary,
-                                                    fontSize: 20,
+                                                    size: 30,
                                                   ),
                                                 ),
-                                                Text(
-                                                  "${waterItems[position].value} L",
-                                                  style: TextStyle(
-                                                    color:
-                                                        AppColors.textPrimary,
-                                                    fontSize: 16,
-                                                  ),
+                                                const SizedBox(width: 10),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      steam
+                                                          .data![position]
+                                                          .name,
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .textPrimary,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "${steam.data![position].value} L",
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .textPrimary,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
+
+                                            GestureDetector(
+                                              onTap: () {
+                                                print(
+                                                  steam.data![position].name,
+                                                );
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons
+                                                        .delete_outline_outlined,
+                                                    color:
+                                                        AppColors.textPrimary,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ],
                                         ),
-
-                                        GestureDetector(
-                                          onTap: () {
-                                            print(waterItems[position].name);
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.delete_outline_outlined,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

@@ -1,4 +1,3 @@
-import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/ui/ui_main.dart';
 import 'package:agua_project/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +24,7 @@ class MyApp extends StatelessWidget {
           selectionHandleColor: Color.fromRGBO(13, 71, 161, 1),
         ),
       ),
-      routes: {
-        '/': (ctx) => UI(),
-        AddActivity.routeName: (ctx) => AddActivity(),
-      },
+      routes: {'/': (ctx) => UI()},
     );
   }
 }

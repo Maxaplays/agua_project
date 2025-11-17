@@ -1,16 +1,17 @@
 import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/pages/home/home_page.dart';
+import 'package:agua_project/services/water_items_service.dart';
 import 'package:flutter/material.dart';
 
 class UI extends StatefulWidget {
   static const routeName = '/UI';
-
   const UI({super.key});
   @override
   State<UI> createState() => _UIState();
 }
 
 class _UIState extends State<UI> {
+  final WaterItemsService service = WaterItemsService();
   int _selectedIndex = 0;
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _UIState extends State<UI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: Home()),
+      body: SafeArea(child: Home(service: service)),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).primaryColor,
@@ -52,7 +53,9 @@ class _UIState extends State<UI> {
         onPressed: () => {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddActivity()),
+            MaterialPageRoute(
+              builder: (context) => AddActivity(service: service),
+            ),
           ),
         },
       ),
