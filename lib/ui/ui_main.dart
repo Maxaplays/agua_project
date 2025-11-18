@@ -1,6 +1,7 @@
 import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/pages/home/home_page.dart';
 import 'package:agua_project/services/water_items_service.dart';
+import 'package:agua_project/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class UI extends StatefulWidget {
@@ -24,23 +25,28 @@ class _UIState extends State<UI> {
     });
   }
 
-  Widget buildIcon(IconData iconData, String text, int index) => SizedBox(
-    width: double.infinity,
-    height: kBottomNavigationBarHeight,
-    child: Material(
-      color: Theme.of(context).primaryColor,
-      child: InkWell(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(iconData, color: Colors.white),
-            Text(text, style: TextStyle(fontSize: 12, color: Colors.white)),
-          ],
+  Widget buildIcon(IconData iconData, String text, int index) {
+    final bool isSelected = _selectedIndex == index;
+    return SizedBox(
+      width: double.infinity,
+      height: kBottomNavigationBarHeight,
+
+      child: Material(
+        color: isSelected ? AppColors.primaryMainDarker : AppColors.primaryMain,
+
+        child: InkWell(
+          onTap: () => _selectPage(index),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(iconData, color: Colors.white),
+              Text(text, style: TextStyle(fontSize: 12, color: Colors.white)),
+            ],
+          ),
         ),
-        onTap: () => _selectPage(index),
       ),
-    ),
-  );
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,15 +75,15 @@ class _UIState extends State<UI> {
         showUnselectedLabels: false,
         items: [
           BottomNavigationBarItem(
-            icon: buildIcon(Icons.home_rounded, "Inicio", 0),
+            icon: buildIcon(Icons.home_rounded, "Home", 0),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: buildIcon(Icons.article_rounded, "Mes", 1),
+            icon: buildIcon(Icons.auto_graph, "Graphs", 1),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: buildIcon(Icons.app_shortcut_sharp, "Mas", 2),
+            icon: buildIcon(Icons.menu_book, "Learn", 2),
             label: "",
           ),
         ],
