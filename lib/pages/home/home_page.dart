@@ -17,7 +17,7 @@ class _HomeState extends State<Home> {
   double max = 150;
   double total = 0;
 
-  late StreamSubscription sub;
+  late final StreamSubscription sub;
 
   @override
   void initState() {
@@ -27,12 +27,18 @@ class _HomeState extends State<Home> {
     });
   }
 
+  @override
+  void dispose() {
+    sub.cancel();
+    super.dispose();
+  }
+
   void calculateAverage(List<WaterItem> items) {
     double aux = 0;
     items.forEach((item) => aux = aux + item.value);
+    if (!mounted) return;
     setState(() {
       total = aux;
-      print("Avg=====>" + total.toString());
     });
   }
 
@@ -41,8 +47,21 @@ class _HomeState extends State<Home> {
     widget.service.setState(items);
   }
 
+  String percentageLabel(double percent) {
+    if (percent >= 1) {
+      return "You exceeded your daily water intake >:v";
+    } else if (percent >= 0.8) {
+      return "High water consumption";
+    } else if (percent >= 0.4) {
+      return "Moderate water consumption";
+    } else {
+      return "Low water consumption";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double percent = total / max;
     return SingleChildScrollView(
       child: Center(
         child: Column(
@@ -59,7 +78,6 @@ class _HomeState extends State<Home> {
                     children: [
                       ShaderMask(
                         shaderCallback: (Rect bounds) {
-                          double percent = total / max;
                           return LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
@@ -82,7 +100,7 @@ class _HomeState extends State<Home> {
                       Text(
                         total.round().toString() + " L",
                         style: TextStyle(
-                          color: (total / max) > 1
+                          color: percent > 1
                               ? Colors.red
                               : AppColors.primaryMain,
                           fontSize: 28,
@@ -93,11 +111,9 @@ class _HomeState extends State<Home> {
                   ),
                   Center(
                     child: Text(
-                      "You exceeded your daily water intake >:v",
+                      percentageLabel(percent),
                       style: TextStyle(
-                        color: (total / max) > 1
-                            ? Colors.red
-                            : AppColors.primaryMain,
+                        color: percent > 1 ? Colors.red : AppColors.primaryMain,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
