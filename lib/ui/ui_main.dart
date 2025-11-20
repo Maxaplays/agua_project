@@ -13,10 +13,23 @@ class UI extends StatefulWidget {
 
 class _UIState extends State<UI> {
   final WaterItemsService service = WaterItemsService();
+
+  late List<Widget> _pages;
   int _selectedIndex = 0;
   @override
   void initState() {
     super.initState();
+    _pages = [
+      Home(service: service),
+      Center(child: Text("Graphs")),
+      Center(child: Text("Learn")),
+    ];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    service.dispose();
   }
 
   void _selectPage(int index) {
@@ -24,12 +37,6 @@ class _UIState extends State<UI> {
       _selectedIndex = index;
     });
   }
-
-  final List<Widget> _pages = [
-    Home(service: WaterItemsService()),
-    Center(child: Text("Graphs")),
-    Center(child: Text("Learn")),
-  ];
 
   Widget buildIcon(IconData iconData, String text, int index) {
     final bool isSelected = _selectedIndex == index;
@@ -57,7 +64,7 @@ class _UIState extends State<UI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: SafeArea(child: _pages[_selectedIndex]),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).primaryColor,
