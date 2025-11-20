@@ -35,13 +35,13 @@ class _HomeState extends State<Home> {
                       double percent = 0.2; // Value for gradient
 
                       return LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
                         colors: [
-                          AppColors.primaryGrey,
-                          AppColors.primaryGrey,
                           AppColors.primaryMain,
                           AppColors.primaryMain,
+                          AppColors.primaryGrey,
+                          AppColors.primaryGrey,
                         ],
                         stops: [0.0, percent, percent, 1.0],
                       ).createShader(bounds);
@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
               child: Card(
                 child: StreamBuilder(
                   stream: widget.service.waterItems$,
-                  builder: (context, steam) {
+                  builder: (context, stream) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
                           physics: NeverScrollableScrollPhysics(),
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: steam.data!.length,
+                          itemCount: stream.data!.length,
                           itemBuilder: (context, position) => Column(
                             children: <Widget>[
                               Card(
@@ -115,14 +115,14 @@ class _HomeState extends State<Home> {
                                                   width: 50,
                                                   height: 50,
                                                   decoration: BoxDecoration(
-                                                    color: steam
+                                                    color: stream
                                                         .data![position]
                                                         .color
                                                         .withAlpha(50),
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: Icon(
-                                                    steam.data![position].icon,
+                                                    stream.data![position].icon,
                                                     color:
                                                         AppColors.textPrimary,
                                                     size: 30,
@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      steam
+                                                      stream
                                                           .data![position]
                                                           .name,
                                                       style: TextStyle(
@@ -144,7 +144,7 @@ class _HomeState extends State<Home> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "${steam.data![position].value} L",
+                                                      "${stream.data![position].value} L",
                                                       style: TextStyle(
                                                         color: AppColors
                                                             .textPrimary,
@@ -159,7 +159,7 @@ class _HomeState extends State<Home> {
                                             GestureDetector(
                                               onTap: () {
                                                 print(
-                                                  steam.data![position].name,
+                                                  stream.data![position].name,
                                                 );
                                               },
                                               child: Row(
