@@ -25,26 +25,26 @@ class WaterItemsService {
       value: 60,
       color: Colors.blue.shade700,
     ),
-    WaterItem(
-      name: "Wash Dishes",
-      count: 1,
-      icon: Icons.waves_sharp,
-      value: 200,
-      color: Colors.blue.shade300,
-    ),
-    WaterItem(
-      name: "Bathroom",
-      count: 1,
-      icon: Icons.wc_sharp,
-      value: 110,
-      color: Colors.blue.shade200,
-    ),
-    WaterItem(
-      name: "Wash Clothes",
-      count: 1,
-      icon: Icons.local_laundry_service_rounded,
-      value: 300,
-    ),
+    // WaterItem(
+    //   name: "Wash Dishes",
+    //   count: 1,
+    //   icon: Icons.waves_sharp,
+    //   value: 200,
+    //   color: Colors.blue.shade300,
+    // ),
+    // WaterItem(
+    //   name: "Bathroom",
+    //   count: 1,
+    //   icon: Icons.wc_sharp,
+    //   value: 110,
+    //   color: Colors.blue.shade200,
+    // ),
+    // WaterItem(
+    //   name: "Wash Clothes",
+    //   count: 1,
+    //   icon: Icons.local_laundry_service_rounded,
+    //   value: 300,
+    // ),
   ];
 
   late final BehaviorSubject<List<WaterItem>> _waterItemsController;
