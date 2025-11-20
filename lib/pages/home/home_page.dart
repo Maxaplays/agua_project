@@ -41,16 +41,6 @@ class _HomeState extends State<Home> {
     widget.service.setState(items);
   }
 
-  // String getStateText(){
-  //   double per = total/max;
-  //   switch (per) {
-  //     case (per >1):
-
-  //       break;
-  //     default:
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

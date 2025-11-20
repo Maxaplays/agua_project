@@ -25,12 +25,6 @@ class _UIState extends State<UI> {
     });
   }
 
-  final List<Widget> _pages = [
-    Home(service: WaterItemsService()),
-    Center(child: Text("Graphs")),
-    Center(child: Text("Learn")),
-  ];
-
   Widget buildIcon(IconData iconData, String text, int index) {
     final bool isSelected = _selectedIndex == index;
     return SizedBox(
@@ -56,6 +50,11 @@ class _UIState extends State<UI> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      Home(service: service),
+      Center(child: Text("Graphs")),
+      Center(child: Text("Learn")),
+    ];
     return Scaffold(
       body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
