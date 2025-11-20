@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:agua_project/models/water_item.dart';
 import 'package:agua_project/services/water_items_service.dart';
 import 'package:flutter/material.dart';
 import 'package:agua_project/theme/colors.dart';
@@ -11,10 +14,42 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  double max = 150;
+  double total = 0;
+
+  late StreamSubscription sub;
+
   @override
   void initState() {
     super.initState();
+    sub = widget.service.waterItems$.listen((value) {
+      calculateAverage(value);
+    });
   }
+
+  void calculateAverage(List<WaterItem> items) {
+    double aux = 0;
+    items.forEach((item) => aux = aux + item.value);
+    setState(() {
+      total = aux;
+      print("Avg=====>" + total.toString());
+    });
+  }
+
+  void deleteItem(int index, List<WaterItem> items) {
+    items.removeAt(index);
+    widget.service.setState(items);
+  }
+
+  // String getStateText(){
+  //   double per = total/max;
+  //   switch (per) {
+  //     case (per >1):
+
+  //       break;
+  //     default:
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -24,41 +59,58 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            Container(
+              constraints: BoxConstraints(minHeight: 250),
               width: MediaQuery.of(context).size.width,
-              height: 250,
-              child: Stack(
-                alignment: Alignment.center,
+              child: Column(
                 children: [
-                  ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      double percent = 0.2; // Value for gradient
-
-                      return LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          AppColors.primaryMain,
-                          AppColors.primaryMain,
-                          AppColors.primaryGrey,
-                          AppColors.primaryGrey,
-                        ],
-                        stops: [0.0, percent, percent, 1.0],
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.srcIn,
-                    child: Icon(
-                      Icons.water_drop_outlined,
-                      size: 250,
-                      color: Colors.white,
-                    ),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (Rect bounds) {
+                          double percent = total / max;
+                          return LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              percent > 1 ? Colors.red : AppColors.primaryMain,
+                              percent > 1 ? Colors.red : AppColors.primaryMain,
+                              percent > 1 ? Colors.red : AppColors.primaryGrey,
+                              percent > 1 ? Colors.red : AppColors.primaryGrey,
+                            ],
+                            stops: [0.0, percent, percent, 1.0],
+                          ).createShader(bounds);
+                        },
+                        blendMode: BlendMode.srcIn,
+                        child: Icon(
+                          Icons.water_drop_outlined,
+                          size: 250,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        total.round().toString() + " L",
+                        style: TextStyle(
+                          color: (total / max) > 1
+                              ? Colors.red
+                              : AppColors.primaryMain,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "150 L",
-                    style: TextStyle(
-                      color: AppColors.primaryMain,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                  Center(
+                    child: Text(
+                      "You exceeded your daily water intake >:v",
+                      style: TextStyle(
+                        color: (total / max) > 1
+                            ? Colors.red
+                            : AppColors.primaryMain,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -79,7 +131,7 @@ class _HomeState extends State<Home> {
                           physics: NeverScrollableScrollPhysics(),
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: stream.data!.length,
+                          itemCount: (stream.data ?? []).length,
                           itemBuilder: (context, position) => Column(
                             children: <Widget>[
                               Card(
@@ -122,7 +174,9 @@ class _HomeState extends State<Home> {
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: Icon(
-                                                    stream.data![position].icon,
+                                                    (stream.data ??
+                                                            [])[position]
+                                                        .icon,
                                                     color:
                                                         AppColors.textPrimary,
                                                     size: 30,
@@ -144,7 +198,7 @@ class _HomeState extends State<Home> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "${stream.data![position].value} L",
+                                                      "${(stream.data ?? [])[position].value} L",
                                                       style: TextStyle(
                                                         color: AppColors
                                                             .textPrimary,
@@ -158,8 +212,9 @@ class _HomeState extends State<Home> {
 
                                             GestureDetector(
                                               onTap: () {
-                                                print(
-                                                  stream.data![position].name,
+                                                deleteItem(
+                                                  position,
+                                                  stream.data ?? [],
                                                 );
                                               },
                                               child: Row(
@@ -186,25 +241,6 @@ class _HomeState extends State<Home> {
                       ],
                     );
                   },
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 120,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.primaryMain,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.20,
-                ),
-                child: Center(
-                  child: Text(
-                    "Total consumed: 600L",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
                 ),
               ),
             ),
