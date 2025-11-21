@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:agua_project/models/activity.dart';
+import 'package:agua_project/models/water_item.dart';
 import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/pages/home/home_page.dart';
+import 'package:agua_project/services/activities_service.dart';
 import 'package:agua_project/services/water_items_service.dart';
 import 'package:agua_project/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UI extends StatefulWidget {
   static const routeName = '/UI';
@@ -12,15 +18,23 @@ class UI extends StatefulWidget {
 }
 
 class _UIState extends State<UI> {
-  final WaterItemsService service = WaterItemsService();
+  final WaterItemsService serviceWaterItems = WaterItemsService();
+  final ActivitiesService serviceActivites = ActivitiesService();
+
+  late final AppLifecycleListener _listener;
+  late SharedPreferences prefInit;
 
   late List<Widget> _pages;
   int _selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
+    getDataFromCache();
+    _listener = AppLifecycleListener(onStateChange: _handleStateChange);
+
     _pages = [
-      Home(service: service),
+      Home(serviceWaterItems: serviceWaterItems),
       Center(child: Text("Graphs")),
       Center(child: Text("Learn")),
     ];
@@ -29,7 +43,64 @@ class _UIState extends State<UI> {
   @override
   void dispose() {
     super.dispose();
-    service.dispose();
+    serviceWaterItems.dispose();
+    _listener.dispose();
+  }
+
+  void _handleStateChange(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      saveDataAtCache();
+    }
+  }
+
+  void saveDataAtCache() {
+    prefInit.setStringList(
+      "waterItems",
+      List.from(
+        serviceWaterItems
+            .getState()
+            .map((item) => jsonEncode(item.toJson()))
+            .toList(),
+      ),
+    );
+    prefInit.setStringList(
+      "activities",
+      List.from(
+        serviceActivites
+            .getState()
+            .map((item) => jsonEncode(item.toJson()))
+            .toList(),
+      ),
+    );
+  }
+
+  Future<void> getDataFromCache() async {
+    List<String> itemsWaterJson = [];
+    List<String> activitiesJson = [];
+    await SharedPreferences.getInstance().then(
+      (values) => {
+        prefInit = values,
+        itemsWaterJson = (values.getStringList("waterItems") ?? []),
+        activitiesJson = (values.getStringList("activities") ?? []),
+        if (itemsWaterJson.isNotEmpty)
+          {
+            serviceWaterItems.setState(
+              itemsWaterJson
+                  .map((item) => WaterItem.fromJson(jsonDecode(item)))
+                  .toList(),
+            ),
+          },
+
+        if (activitiesJson.isNotEmpty)
+          {
+            serviceActivites.setState(
+              activitiesJson
+                  .map((item) => Activity.fromJson(jsonDecode(item)))
+                  .toList(),
+            ),
+          },
+      },
+    );
   }
 
   void _selectPage(int index) {
@@ -63,11 +134,6 @@ class _UIState extends State<UI> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [
-      Home(service: service),
-      Center(child: Text("Graphs")),
-      Center(child: Text("Learn")),
-    ];
     return Scaffold(
       body: SafeArea(child: _pages[_selectedIndex]),
       floatingActionButton: FloatingActionButton(
@@ -78,7 +144,10 @@ class _UIState extends State<UI> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddActivity(service: service),
+              builder: (context) => AddActivity(
+                serviceWaterItems: serviceWaterItems,
+                serviceActivites: serviceActivites,
+              ),
             ),
           ),
         },

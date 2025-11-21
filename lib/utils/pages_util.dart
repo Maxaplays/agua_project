@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 List<Widget> generatePages(WaterItemsService serviceHome) {
   return [
-    Home(service: serviceHome),
+    Home(serviceWaterItems: serviceHome),
     Center(child: Text("Graphs")),
     Center(child: Text("Learn")),
   ];

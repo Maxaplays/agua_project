@@ -2,6 +2,7 @@ import 'package:agua_project/models/activity.dart';
 import 'package:agua_project/models/new_item.dart';
 import 'package:agua_project/models/water_item.dart';
 import 'package:agua_project/pages/add_type_activity/add_type_activity.dart';
+import 'package:agua_project/services/activities_service.dart';
 import 'package:agua_project/services/water_items_service.dart';
 import 'package:agua_project/ui/ui_main.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,13 @@ import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
 class AddActivity extends StatefulWidget {
   static const routeName = '/add-activity';
-  final WaterItemsService service;
-  const AddActivity({required this.service, super.key});
+  final WaterItemsService serviceWaterItems;
+  final ActivitiesService serviceActivites;
+  const AddActivity({
+    required this.serviceWaterItems,
+    required this.serviceActivites,
+    super.key,
+  });
 
   @override
   State<AddActivity> createState() => _AddActivityState();
@@ -24,12 +30,7 @@ class _AddActivityState extends State<AddActivity> {
   TextEditingController time = TextEditingController();
 
   String? selectedItem;
-  List<Activity> items = [
-    Activity(name: 'Take a shower', consumption: 5),
-    Activity(name: 'Wash the dishes', consumption: 3),
-    Activity(name: 'Bathe the dog', consumption: 7),
-    Activity(name: 'Brush your teeth', consumption: 1),
-  ];
+  late List<Activity> items;
   Activity? itemSelected;
   IconData? iconSelected;
 
@@ -75,6 +76,17 @@ class _AddActivityState extends State<AddActivity> {
         iconSelected = icon.data;
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    items = List<Activity>.from(widget.serviceActivites.getState());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -195,9 +207,7 @@ class _AddActivityState extends State<AddActivity> {
                     if (formKey.currentState!.validate() &&
                         iconSelected != null)
                       {
-                        print("Item selected: $itemSelected"),
-                        print("time: " + time.text),
-                        modifyList(
+                        modifyWaterItemsList(
                           NewItem(
                             activity: itemSelected!,
                             time: int.parse(time.text),
@@ -225,12 +235,14 @@ class _AddActivityState extends State<AddActivity> {
   void addNewActivity(Activity newActivity) {
     setState(() {
       items.add(newActivity);
+      widget.serviceActivites.setState(items);
     });
   }
 
-  void modifyList(NewItem item) {
-    List<WaterItem> tempList = List<WaterItem>.from(widget.service.getState());
-    print(tempList);
+  void modifyWaterItemsList(NewItem item) {
+    List<WaterItem> tempList = List<WaterItem>.from(
+      widget.serviceWaterItems.getState(),
+    );
     List<WaterItem> findItem = tempList
         .where((i) => i.name == item.activity.name)
         .toList();
@@ -251,7 +263,6 @@ class _AddActivityState extends State<AddActivity> {
           aux.value + (item.activity.consumption * (item.time / 60)).toInt();
       tempList[index] = aux;
     }
-    widget.service.setState(tempList);
-    print(widget.service.getState());
+    widget.serviceWaterItems.setState(tempList);
   }
 }

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:agua_project/theme/colors.dart';
 
 class Home extends StatefulWidget {
-  final WaterItemsService service;
-  const Home({required this.service, super.key});
+  final WaterItemsService serviceWaterItems;
+  const Home({required this.serviceWaterItems, super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    sub = widget.service.waterItems$.listen((value) {
+    sub = widget.serviceWaterItems.waterItems$.listen((value) {
       calculateAverage(value);
     });
   }
@@ -35,7 +35,9 @@ class _HomeState extends State<Home> {
 
   void calculateAverage(List<WaterItem> items) {
     double aux = 0;
-    items.forEach((item) => aux = aux + item.value);
+    for (var i = 0; i < items.length; i++) {
+      aux = aux + items[i].value;
+    }
     if (!mounted) return;
     setState(() {
       total = aux;
@@ -44,7 +46,7 @@ class _HomeState extends State<Home> {
 
   void deleteItem(int index, List<WaterItem> items) {
     items.removeAt(index);
-    widget.service.setState(items);
+    widget.serviceWaterItems.setState(items);
   }
 
   String percentageLabel(double percent) {
@@ -98,7 +100,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Text(
-                        total.round().toString() + " L",
+                        "${total.round()} L",
                         style: TextStyle(
                           color: percent > 1
                               ? Colors.red
@@ -127,7 +129,7 @@ class _HomeState extends State<Home> {
               margin: EdgeInsets.all(50),
               child: Card(
                 child: StreamBuilder(
-                  stream: widget.service.waterItems$,
+                  stream: widget.serviceWaterItems.waterItems$,
                   builder: (context, stream) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
