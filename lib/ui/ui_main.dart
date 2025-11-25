@@ -4,6 +4,8 @@ import 'package:agua_project/models/activity.dart';
 import 'package:agua_project/models/water_item.dart';
 import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/pages/home/home_page.dart';
+import 'package:agua_project/pages/graph/graph_page.dart';
+
 import 'package:agua_project/services/activities_service.dart';
 import 'package:agua_project/services/water_items_service.dart';
 import 'package:agua_project/theme/colors.dart';
@@ -35,7 +37,7 @@ class _UIState extends State<UI> {
 
     _pages = [
       Home(serviceWaterItems: serviceWaterItems),
-      Center(child: Text("Graphs")),
+      Graph(),
       Center(child: Text("Learn")),
     ];
   }
