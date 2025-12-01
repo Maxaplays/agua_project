@@ -5,10 +5,12 @@ import 'package:agua_project/models/water_item.dart';
 import 'package:agua_project/pages/add_activity/add_activity.dart';
 import 'package:agua_project/pages/home/home_page.dart';
 import 'package:agua_project/pages/graph/graph_page.dart';
+import 'package:agua_project/pages/learn/learn_page.dart';
 
 import 'package:agua_project/services/activities_service.dart';
 import 'package:agua_project/services/water_items_service.dart';
 import 'package:agua_project/theme/colors.dart';
+import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +21,7 @@ class UI extends StatefulWidget {
   State<UI> createState() => _UIState();
 }
 
-class _UIState extends State<UI> {
+class _UIState extends State<UI> with SingleTickerProviderStateMixin {
   final WaterItemsService serviceWaterItems = WaterItemsService();
   final ActivitiesService serviceActivites = ActivitiesService();
 
@@ -29,17 +31,27 @@ class _UIState extends State<UI> {
   late List<Widget> _pages;
   int _selectedIndex = 0;
 
+  late Animation<double> _animation;
+  late AnimationController _animationController;
+
   @override
   void initState() {
     super.initState();
     getDataFromCache();
     _listener = AppLifecycleListener(onStateChange: _handleStateChange);
 
-    _pages = [
-      Home(serviceWaterItems: serviceWaterItems),
-      Graph(),
-      Center(child: Text("Learn")),
-    ];
+    _pages = [Home(serviceWaterItems: serviceWaterItems), Graph(), Learn()];
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 260),
+    );
+
+    final curvedAnimation = CurvedAnimation(
+      curve: Curves.easeInOut,
+      parent: _animationController,
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
   }
 
   @override
@@ -138,22 +150,61 @@ class _UIState extends State<UI> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: _pages[_selectedIndex]),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Colors.white,
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(Icons.add),
-        onPressed: () => {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddActivity(
-                serviceWaterItems: serviceWaterItems,
-                serviceActivites: serviceActivites,
-              ),
-            ),
-          ),
-        },
-      ),
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionBubble(
+              backGroundColor: Theme.of(context).primaryColor,
+              items: [
+                Bubble(
+                  title: "Add activity",
+                  iconColor: Colors.white,
+                  bubbleColor: Theme.of(context).primaryColor,
+                  icon: Icons.add,
+                  titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  onPress: () {
+                    _animationController.reverse();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddActivity(
+                          serviceWaterItems: serviceWaterItems,
+                          serviceActivites: serviceActivites,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Bubble(
+                  title: "Add with camera",
+                  iconColor: Colors.white,
+                  bubbleColor: Theme.of(context).primaryColor,
+                  icon: Icons.home,
+                  titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  onPress: () {
+                    _animationController.reverse();
+                  },
+                ),
+                Bubble(
+                  title: "Add Routine",
+                  iconColor: Colors.white,
+                  bubbleColor: Theme.of(context).primaryColor,
+                  icon: Icons.home,
+                  titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  onPress: () {
+                    _animationController.reverse();
+                  },
+                ),
+              ],
+              animation: _animation,
+              onPress: () => {
+                if (_animationController.isCompleted)
+                  {_animationController.reverse()}
+                else
+                  {_animationController.forward()},
+              },
+              iconColor: Colors.white,
+              iconData: Icons.more_vert_outlined,
+            )
+          : Container(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         selectedFontSize: 0,
